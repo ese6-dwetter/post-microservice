@@ -16,7 +16,6 @@ namespace PostMicroservice
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseSentry();
                 });
         }
     }
