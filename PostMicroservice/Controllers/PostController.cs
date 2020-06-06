@@ -43,7 +43,6 @@ namespace PostMicroservice.Controllers
             }
         }
         
-        [Authorize]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
