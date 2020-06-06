@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PostMicroservice.Repositories;
 using PostMicroservice.Services;
 using PostMicroservice.Settings;
 
@@ -93,6 +94,7 @@ namespace PostMicroservice
 
             // Configure DI for application services
             services.AddTransient<IPostService, PostService>();
+            services.AddTransient<IPostRepository, PostRepository>();
 
             #endregion
 

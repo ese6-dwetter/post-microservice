@@ -41,12 +41,5 @@ namespace PostMicroservice.Repositories
         /// <param name="id">Guid of the entity to remove</param>
         /// <returns>Async task to await</returns>
         Task DeleteByIdAsync(Guid id);
-
-        /// <summary>
-        ///     Removes an entity.
-        /// </summary>
-        /// <param name="entityIn">Entity to remove</param>
-        /// <returns>Async task to await</returns>
-        Task DeleteByUserAsync(T entityIn);
     }
 }

@@ -47,10 +47,5 @@ namespace PostMicroservice.Repositories
         {
             await Collection.DeleteOneAsync(entity => entity.Id == id);
         }
-
-        public async Task DeleteByUserAsync(T entityIn)
-        {
-            await Collection.DeleteOneAsync(entity => entity.Id == entityIn.Id);
-        }
     }
 }
