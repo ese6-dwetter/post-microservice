@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: post-microservice
+  namespace: dwetter-develop
+  labels:
+    app: post-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: post-microservice
+  template:
+    metadata:
+      labels:
+        app: post-microservice
+    spec:
+      containers:
+        - name: post-microservice
+          image: ese6dwetter/post-microservice
+          imagePullPolicy: IfNotPresent
+          ports: 
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /healthy
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
