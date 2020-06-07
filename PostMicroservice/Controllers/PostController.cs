@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Mime;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PostMicroservice.Exceptions;
