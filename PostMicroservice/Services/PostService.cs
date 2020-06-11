@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using PostMicroservice.Entities;
 using PostMicroservice.Exceptions;
+using PostMicroservice.Helpers;
 using PostMicroservice.Repositories;
 
 namespace PostMicroservice.Services
@@ -11,10 +12,12 @@ namespace PostMicroservice.Services
     public class PostService : IPostService
     {
         private readonly IPostRepository _repository;
+        private readonly ITokenGenerator _tokenGenerator;
 
-        public PostService(IPostRepository repository)
+        public PostService(IPostRepository repository, ITokenGenerator tokenGenerator)
         {
             _repository = repository;
+            _tokenGenerator = tokenGenerator;
         }
 
         public async Task<Post> GetPostByIdAsync(Guid id)
@@ -30,8 +33,11 @@ namespace PostMicroservice.Services
             return await _repository.ReadAsync();
         }
 
-        public async Task<Post> CreatePostAsync(string content, Guid userId, string username)
+        public async Task<Post> CreatePostAsync(string content, Guid userId, string username, string token)
         {
+            if (!_tokenGenerator.ValidateJwt(token, userId.ToString()))
+                throw new UnauthorizedAccessException();
+            
             var post = await _repository.CreateAsync(new Post
             {
                 Content = content,
@@ -59,10 +65,16 @@ namespace PostMicroservice.Services
             return posts;
         }
 
-        public async Task<Post> AddLikeToPostAsync(Guid postId, Guid userId, string username)
+        public async Task<Post> AddLikeToPostAsync(Guid postId, Guid userId, string username, string token)
         {
+            if (!_tokenGenerator.ValidateJwt(token, userId.ToString()))
+                throw new UnauthorizedAccessException();
+            
             var post = await _repository.ReadByIdAsync(postId)
                        ?? throw new PostNotFoundException();
+
+            if (post.Likes.ToList().Find(x => x.User.Id == userId) != null)
+                throw new AlreadyLikedException();
 
             post.Likes.ToList().Add(new Like
             {
@@ -77,8 +89,11 @@ namespace PostMicroservice.Services
             return await _repository.UpdateAsync(postId, post);
         }
 
-        public async Task<Post> RemoveLikeFromPostAsync(Guid postId, Guid userId)
+        public async Task<Post> RemoveLikeFromPostAsync(Guid postId, Guid userId, string token)
         {
+            if (!_tokenGenerator.ValidateJwt(token, userId.ToString()))
+                throw new UnauthorizedAccessException();
+            
             var post = await _repository.ReadByIdAsync(postId)
                        ?? throw new PostNotFoundException();
 
