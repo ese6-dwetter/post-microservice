@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PostMicroservice.Helpers;
 using PostMicroservice.Repositories;
 using PostMicroservice.Services;
 using PostMicroservice.Settings;
@@ -34,8 +35,8 @@ namespace PostMicroservice
             #region Settings
 
             // Configure strongly typed settings objects
-            var appSettingsSection = Configuration.GetSection(nameof(AppSettings));
-            services.Configure<AppSettings>(appSettingsSection);
+            var appSettingsSection = Configuration.GetSection(nameof(TokenSettings));
+            services.Configure<TokenSettings>(appSettingsSection);
 
             var databaseSettingsSection = Configuration.GetSection(nameof(DatabaseSettings));
             services.Configure<DatabaseSettings>(databaseSettingsSection);
@@ -95,14 +96,14 @@ namespace PostMicroservice
             // Configure DI for application services
             services.AddTransient<IPostService, PostService>();
             services.AddTransient<IPostRepository, PostRepository>();
+            services.AddTransient<ITokenGenerator, TokenGenerator>();
 
             #endregion
 
             #region Authentication
 
             // Configure JWT authentication
-            var appSettings = appSettingsSection.Get<AppSettings>();
-            var signingKey = Encoding.ASCII.GetBytes(appSettings.Secret);
+            var appSettings = appSettingsSection.Get<TokenSettings>();
 
             services.AddAuthentication(options =>
                 {
@@ -111,15 +112,16 @@ namespace PostMicroservice
                 }
             ).AddJwtBearer(options =>
             {
-                options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(signingKey),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidIssuer = appSettings.Issuer,
+                    ValidAudience = appSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(appSettings.Secret))
                 };
+                options.SaveToken = true;
             });
 
             #endregion

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using PostMicroservice.Entities;
 using PostMicroservice.Exceptions;
@@ -35,7 +36,8 @@ namespace PostMicroservice.Services
 
         public async Task<Post> CreatePostAsync(string content, Guid userId, string username, string token)
         {
-            if (!_tokenGenerator.ValidateJwt(token, userId.ToString()))
+            if (!_tokenGenerator.ValidateJwt(token) ||
+                _tokenGenerator.GetJwtClaim(token, ClaimTypes.NameIdentifier) != userId.ToString())
                 throw new UnauthorizedAccessException();
             
             var post = await _repository.CreateAsync(new Post
@@ -67,7 +69,7 @@ namespace PostMicroservice.Services
 
         public async Task<Post> AddLikeToPostAsync(Guid postId, Guid userId, string username, string token)
         {
-            if (!_tokenGenerator.ValidateJwt(token, userId.ToString()))
+            if (!_tokenGenerator.ValidateJwt(token))
                 throw new UnauthorizedAccessException();
             
             var post = await _repository.ReadByIdAsync(postId)
@@ -91,7 +93,7 @@ namespace PostMicroservice.Services
 
         public async Task<Post> RemoveLikeFromPostAsync(Guid postId, Guid userId, string token)
         {
-            if (!_tokenGenerator.ValidateJwt(token, userId.ToString()))
+            if (!_tokenGenerator.ValidateJwt(token))
                 throw new UnauthorizedAccessException();
             
             var post = await _repository.ReadByIdAsync(postId)
