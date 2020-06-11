@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using PostMicroservice.Entities;
 using PostMicroservice.Exceptions;
@@ -36,10 +35,11 @@ namespace PostMicroservice.Services
 
         public async Task<Post> CreatePostAsync(string content, Guid userId, string username, string token)
         {
-            if (!_tokenGenerator.ValidateJwt(token) ||
-                _tokenGenerator.GetJwtClaim(token, ClaimTypes.NameIdentifier) != userId.ToString())
+            if (!_tokenGenerator.ValidateJwt(token)
+                || _tokenGenerator.GetJwtClaim(token, "nameid") != userId.ToString()
+                || _tokenGenerator.GetJwtClaim(token, "unique_name") != username)
                 throw new UnauthorizedAccessException();
-            
+
             var post = await _repository.CreateAsync(new Post
             {
                 Content = content,
