@@ -13,9 +13,9 @@ namespace PostMicroservice.Helpers
     {
         private readonly TokenSettings _tokenSettings;
 
-        public TokenGenerator(IOptions<TokenSettings> appSettings)
+        public TokenGenerator(IOptions<TokenSettings> tokenSettings)
         {
-            _tokenSettings = appSettings.Value;
+            _tokenSettings = tokenSettings.Value;
         }
 
         public string GenerateJwt(Guid userId, string email, string username)
@@ -61,7 +61,6 @@ namespace PostMicroservice.Helpers
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     
                     ValidIssuer = issuer,
