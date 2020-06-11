@@ -33,20 +33,24 @@ namespace PostMicroservice.Services
             return await _repository.ReadAsync();
         }
 
-        public async Task<Post> CreatePostAsync(string content, Guid userId, string username, string token)
+        public async Task<Post> CreatePostAsync(string content, string token)
         {
-            if (!_tokenGenerator.ValidateJwt(token)
-                || _tokenGenerator.GetJwtClaim(token, "nameid") != userId.ToString()
-                || _tokenGenerator.GetJwtClaim(token, "unique_name") != username)
+            if (!_tokenGenerator.ValidateJwt(token))
+                throw new UnauthorizedAccessException();
+
+            var id = Guid.Parse(_tokenGenerator.GetJwtClaim(token, "nameid"));
+            var username = _tokenGenerator.GetJwtClaim(token, "unique_name");
+
+            if (id == null || username == null)
                 throw new UnauthorizedAccessException();
 
             var post = await _repository.CreateAsync(new Post
             {
                 Content = content,
-                DateTime = DateTime.Now,
+                DateTime = DateTime.UtcNow,
                 User = new User
                 {
-                    Id = userId,
+                    Id = id,
                     Username = username
                 }
             });
@@ -67,23 +71,29 @@ namespace PostMicroservice.Services
             return posts;
         }
 
-        public async Task<Post> AddLikeToPostAsync(Guid postId, Guid userId, string username, string token)
+        public async Task<Post> AddLikeToPostAsync(Guid postId, string token)
         {
             if (!_tokenGenerator.ValidateJwt(token))
                 throw new UnauthorizedAccessException();
-            
+
+            var id = Guid.Parse(_tokenGenerator.GetJwtClaim(token, "nameid"));
+            var username = _tokenGenerator.GetJwtClaim(token, "unique_name");
+
+            if (id == null || username == null)
+                throw new UnauthorizedAccessException();
+
             var post = await _repository.ReadByIdAsync(postId)
                        ?? throw new PostNotFoundException();
 
-            if (post.Likes.ToList().Find(x => x.User.Id == userId) != null)
+            if (post.Likes.ToList().Find(x => x.User.Id == id) != null)
                 throw new AlreadyLikedException();
 
             post.Likes.ToList().Add(new Like
             {
-                DateTime = DateTime.Now,
+                DateTime = DateTime.UtcNow,
                 User = new User
                 {
-                    Id = userId,
+                    Id = id,
                     Username = username
                 }
             });
@@ -91,15 +101,20 @@ namespace PostMicroservice.Services
             return await _repository.UpdateAsync(postId, post);
         }
 
-        public async Task<Post> RemoveLikeFromPostAsync(Guid postId, Guid userId, string token)
+        public async Task<Post> RemoveLikeFromPostAsync(Guid postId, string token)
         {
             if (!_tokenGenerator.ValidateJwt(token))
                 throw new UnauthorizedAccessException();
-            
+
+            var id = Guid.Parse(_tokenGenerator.GetJwtClaim(token, "nameid"));
+
+            if (id == null)
+                throw new UnauthorizedAccessException();
+
             var post = await _repository.ReadByIdAsync(postId)
                        ?? throw new PostNotFoundException();
 
-            post.Likes.ToList().RemoveAll(x => x.User.Id == userId);
+            post.Likes.ToList().RemoveAll(x => x.User.Id == id);
 
             return await _repository.UpdateAsync(postId, post);
         }

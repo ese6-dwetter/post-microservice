@@ -16,7 +16,7 @@ namespace PostMicroservice.Services
 
         Task<List<Post>> GetPostsAsync();
 
-        Task<Post> CreatePostAsync(string content, Guid userId, string username, string token);
+        Task<Post> CreatePostAsync(string content, string token);
         
         Task DeletePostByIdAsync(Guid id);
         
@@ -26,8 +26,8 @@ namespace PostMicroservice.Services
         /// <returns>List of posts by user id</returns>
         Task<List<Post>> GetPostsByUserIdAsync(Guid userId);
 
-        Task<Post> AddLikeToPostAsync(Guid postId, Guid userId, string username, string token);
+        Task<Post> AddLikeToPostAsync(Guid postId, string token);
         
-        Task<Post> RemoveLikeFromPostAsync(Guid postId, Guid userId, string token);
+        Task<Post> RemoveLikeFromPostAsync(Guid postId, string token);
     }
 }

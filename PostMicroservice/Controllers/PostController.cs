@@ -22,7 +22,7 @@ namespace PostMicroservice.Controllers
             _service = service;
         }
         
-        [HttpGet("/{id}")]
+        [HttpGet("/posts/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -42,7 +42,7 @@ namespace PostMicroservice.Controllers
             }
         }
         
-        [HttpGet]
+        [HttpGet("/posts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetPostsAsync()
@@ -57,27 +57,7 @@ namespace PostMicroservice.Controllers
             }
         }
 
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> CreatePostAsync([FromBody] CreatePostModel model, [FromHeader(Name = "Authorization")] string token)
-        {
-            try
-            {
-                return Ok(await _service.CreatePostAsync(model.Content, model.UserId, model.Username, token));
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpGet("/user/{id}")]
+        [HttpGet("/posts/users/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -97,16 +77,36 @@ namespace PostMicroservice.Controllers
             }
         }
 
-        [HttpPost("/like/add")]
+        [HttpPost("/posts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> CreatePostAsync([FromBody] CreatePostModel model, [FromHeader(Name = "Authorization")] string token)
+        {
+            try
+            {
+                return Ok(await _service.CreatePostAsync(model.Content, token));
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("/posts/{id}/likes/add")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> AddLikeToPostAsync([FromBody] AddLikeToPostModel model, [FromHeader(Name = "Authorization")] string token)
+        public async Task<IActionResult> AddLikeToPostAsync([FromQuery] Guid id, [FromHeader(Name = "Authorization")] string token)
         {
             try
             {
-                return Ok(await _service.AddLikeToPostAsync(model.PostId, model.UserId, model.Username, token));
+                return Ok(await _service.AddLikeToPostAsync(id, token));
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -122,16 +122,16 @@ namespace PostMicroservice.Controllers
             }
         }
 
-        [HttpPost("/like/remove")]
+        [HttpPost("/posts/{id}/likes/remove")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> RemoveLikeToPostAsync([FromBody] RemoveLikeFromPostModel model, [FromHeader(Name = "Authorization")] string token)
+        public async Task<IActionResult> RemoveLikeToPostAsync([FromQuery] Guid id, [FromHeader(Name = "Authorization")] string token)
         {
             try
             {
-                return Ok(await _service.RemoveLikeFromPostAsync(model.PostId, model.UserId, token));
+                return Ok(await _service.RemoveLikeFromPostAsync(id, token));
             }
             catch (UnauthorizedAccessException ex)
             {
