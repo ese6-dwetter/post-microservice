@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: post-microservice
-  namespace: dwetter
   labels:
     app: post-microservice
+  name: post-microservice
+  namespace: dwetter
 spec:
   replicas: 1
   selector:
@@ -21,20 +21,6 @@ spec:
           name: post-microservice
           ports: 
             - containerPort: 80
-          # livenessProbe:
-          #   httpGet:
-          #     path: /healthy
-          #     port: 80
-          #     scheme: HTTP
-          #   initialDelaySeconds: 15
-          #   periodSeconds: 15
-          # readinessProbe:
-          #   httpGet:
-          #     path: /ready
-          #     port: 80
-          #     scheme: HTTP
-          #   initialDelaySeconds: 15
-          #   periodSeconds: 15
           resources:
             limits:
               cpu: 100m

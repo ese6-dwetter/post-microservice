@@ -1,15 +1,15 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
-metadata: 
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-develop"
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
   name: post-microservice-ingress
   namespace: dwetter-develop
-  annotations: 
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    kubernetes.io/ingress.class: "nginx"
-    cert-manager.io/cluster-issuer: "letsencrypt-develop"    
-    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   rules:
     - host: post.develop.dwetter.nl
@@ -19,10 +19,10 @@ spec:
               serviceName: post-microservice
               servicePort: 80
   tls:
-    - secretName: post-microservice-tls
-      hosts:
+    - hosts:
         - post.develop.dwetter.nl
+      secretName: post-microservice-tls
 status:
   loadBalancer:
     ingress:
-      - ip: 207.180.245.152
+      - {}
