@@ -35,8 +35,8 @@ namespace PostMicroservice
             #region Settings
 
             // Configure strongly typed settings objects
-            var tokenSettingsSection = Configuration.GetSection(nameof(TokenSettings));
-            services.Configure<TokenSettings>(tokenSettingsSection);
+            var appSettingsSection = Configuration.GetSection(nameof(TokenSettings));
+            services.Configure<TokenSettings>(appSettingsSection);
 
             var databaseSettingsSection = Configuration.GetSection(nameof(DatabaseSettings));
             services.Configure<DatabaseSettings>(databaseSettingsSection);
@@ -103,7 +103,7 @@ namespace PostMicroservice
             #region Authentication
 
             // Configure JWT authentication
-            var tokenSettings = tokenSettingsSection.Get<TokenSettings>();
+            var appSettings = appSettingsSection.Get<TokenSettings>();
 
             services.AddAuthentication(options =>
                 {
@@ -117,9 +117,9 @@ namespace PostMicroservice
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = tokenSettings.Issuer,
-                    ValidAudience = tokenSettings.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(tokenSettings.Secret))
+                    ValidIssuer = appSettings.Issuer,
+                    ValidAudience = appSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(appSettings.Secret))
                 };
                 options.SaveToken = true;
             });

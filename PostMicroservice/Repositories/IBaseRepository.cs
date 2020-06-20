@@ -18,7 +18,7 @@ namespace PostMicroservice.Repositories
         ///     Gets a list of all the entities.
         /// </summary>
         /// <returns>List of all the entities</returns>
-        Task<IEnumerable<T>> ReadAsync();
+        Task<List<T>> ReadAsync();
 
         /// <summary>
         ///     Gets a single entity by their Guid.

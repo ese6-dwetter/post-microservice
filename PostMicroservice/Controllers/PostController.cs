@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Mime;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PostMicroservice.Exceptions;
@@ -11,8 +10,7 @@ using PostMicroservice.Services;
 namespace PostMicroservice.Controllers
 {
     [ApiController]
-    [Authorize]
-    [Route("posts")]
+    [Route("[controller]")]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces(MediaTypeNames.Application.Json)]
     public class PostController : Controller
@@ -24,8 +22,7 @@ namespace PostMicroservice.Controllers
             _service = service;
         }
         
-        [AllowAnonymous]
-        [HttpGet("{id}")]
+        [HttpGet("/posts/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -45,8 +42,7 @@ namespace PostMicroservice.Controllers
             }
         }
         
-        [AllowAnonymous]
-        [HttpGet]
+        [HttpGet("/posts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetPostsAsync()
@@ -61,8 +57,7 @@ namespace PostMicroservice.Controllers
             }
         }
 
-        [AllowAnonymous]
-        [HttpGet("users/{id}")]
+        [HttpGet("/posts/users/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -82,7 +77,7 @@ namespace PostMicroservice.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("/posts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -102,7 +97,7 @@ namespace PostMicroservice.Controllers
             }
         }
 
-        [HttpPost("{id}/likes")]
+        [HttpPost("/posts/{id}/likes/add")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -111,7 +106,7 @@ namespace PostMicroservice.Controllers
         {
             try
             {
-                return Ok(await _service.LikePostByIdAsync(id, token));
+                return Ok(await _service.AddLikeToPostAsync(id, token));
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -127,16 +122,16 @@ namespace PostMicroservice.Controllers
             }
         }
 
-        [HttpDelete("{id}/likes")]
+        [HttpPost("/posts/{id}/likes/remove")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UnlikePostByIdAsync([FromQuery] Guid id, [FromHeader(Name = "Authorization")] string token)
+        public async Task<IActionResult> RemoveLikeToPostAsync([FromQuery] Guid id, [FromHeader(Name = "Authorization")] string token)
         {
             try
             {
-                return Ok(await _service.UnlikePostByIdAsync(id, token));
+                return Ok(await _service.RemoveLikeFromPostAsync(id, token));
             }
             catch (UnauthorizedAccessException ex)
             {

@@ -14,7 +14,7 @@ namespace PostMicroservice.Services
         /// <returns>Post by id</returns>
         Task<Post> GetPostByIdAsync(Guid id);
 
-        Task<IEnumerable<Post>> GetPostsAsync();
+        Task<List<Post>> GetPostsAsync();
 
         Task<Post> CreatePostAsync(string content, string token);
         
@@ -24,10 +24,10 @@ namespace PostMicroservice.Services
         /// Get posts from a user by id.
         /// </summary>
         /// <returns>List of posts by user id</returns>
-        Task<IEnumerable<Post>> GetPostsByUserIdAsync(Guid userId);
+        Task<List<Post>> GetPostsByUserIdAsync(Guid userId);
 
-        Task<Post> LikePostByIdAsync(Guid postId, string token);
+        Task<Post> AddLikeToPostAsync(Guid postId, string token);
         
-        Task<Post> UnlikePostByIdAsync(Guid postId, string token);
+        Task<Post> RemoveLikeFromPostAsync(Guid postId, string token);
     }
 }

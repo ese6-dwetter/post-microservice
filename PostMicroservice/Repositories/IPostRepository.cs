@@ -12,13 +12,13 @@ namespace PostMicroservice.Repositories
         /// </summary>
         /// <param name="userId">The id of the user</param>
         /// <returns>Enumerable of all the posts of the user</returns>
-        Task<IEnumerable<Post>> ReadByUserIdAsync(Guid userId);
+        Task<List<Post>> ReadByUserIdAsync(Guid userId);
         
         /// <summary>
         ///     Gets a Enumerable of all posts from the users.
         /// </summary>
         /// <param name="userIds">The ids of the users</param>
         /// <returns>Enumerable of all the posts of the users</returns>
-        Task<IEnumerable<Post>> ReadByUserIds(IEnumerable<Guid> userIds);
+        Task<List<Post>> ReadByUserIds(IEnumerable<Guid> userIds);
     }
 }

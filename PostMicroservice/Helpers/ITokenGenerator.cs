@@ -14,6 +14,13 @@ namespace PostMicroservice.Helpers
         string GenerateJwt(Guid userId, string email, string username);
 
         /// <summary>
+        ///     Validates a JSON Web Token
+        /// </summary>
+        /// <param name="token">Token of the Bearer</param>
+        /// <returns>JSON Web Token</returns>
+        bool ValidateJwt(string token);
+
+        /// <summary>
         ///     Gets claims from a JSON Web Token
         /// </summary>
         /// <param name="token">Token of the Bearer</param>

@@ -28,13 +28,16 @@ namespace PostMicroservice.Services
             return post;
         }
 
-        public async Task<IEnumerable<Post>> GetPostsAsync()
+        public async Task<List<Post>> GetPostsAsync()
         {
             return await _repository.ReadAsync();
         }
 
         public async Task<Post> CreatePostAsync(string content, string token)
         {
+            if (!_tokenGenerator.ValidateJwt(token))
+                throw new UnauthorizedAccessException();
+
             var id = Guid.Parse(_tokenGenerator.GetJwtClaim(token, "nameid"));
             var username = _tokenGenerator.GetJwtClaim(token, "unique_name");
 
@@ -60,7 +63,7 @@ namespace PostMicroservice.Services
             await _repository.DeleteByIdAsync(id);
         }
 
-        public async Task<IEnumerable<Post>> GetPostsByUserIdAsync(Guid userId)
+        public async Task<List<Post>> GetPostsByUserIdAsync(Guid userId)
         {
             var posts = await _repository.ReadByUserIdAsync(userId)
                         ?? throw new PostNotFoundException();
@@ -68,8 +71,11 @@ namespace PostMicroservice.Services
             return posts;
         }
 
-        public async Task<Post> LikePostByIdAsync(Guid postId, string token)
+        public async Task<Post> AddLikeToPostAsync(Guid postId, string token)
         {
+            if (!_tokenGenerator.ValidateJwt(token))
+                throw new UnauthorizedAccessException();
+
             var id = Guid.Parse(_tokenGenerator.GetJwtClaim(token, "nameid"));
             var username = _tokenGenerator.GetJwtClaim(token, "unique_name");
 
@@ -95,8 +101,11 @@ namespace PostMicroservice.Services
             return await _repository.UpdateAsync(postId, post);
         }
 
-        public async Task<Post> UnlikePostByIdAsync(Guid postId, string token)
+        public async Task<Post> RemoveLikeFromPostAsync(Guid postId, string token)
         {
+            if (!_tokenGenerator.ValidateJwt(token))
+                throw new UnauthorizedAccessException();
+
             var id = Guid.Parse(_tokenGenerator.GetJwtClaim(token, "nameid"));
 
             if (id == null)
