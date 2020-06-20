@@ -13,12 +13,12 @@ namespace PostMicroservice.Repositories
         {
         }
 
-        public async Task<List<Post>> ReadByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<Post>> ReadByUserIdAsync(Guid userId)
         {
             return await Collection.Find(post => post.User.Id == userId).ToListAsync();
         }
 
-        public async Task<List<Post>> ReadByUserIds(IEnumerable<Guid> userIds)
+        public async Task<IEnumerable<Post>> ReadByUserIds(IEnumerable<Guid> userIds)
         {
             var posts = new List<Post>();
             
