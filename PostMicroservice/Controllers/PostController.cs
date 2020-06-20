@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PostMicroservice.Exceptions;
@@ -10,7 +11,8 @@ using PostMicroservice.Services;
 namespace PostMicroservice.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Authorize]
+    [Route("posts")]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces(MediaTypeNames.Application.Json)]
     public class PostController : Controller
@@ -22,7 +24,8 @@ namespace PostMicroservice.Controllers
             _service = service;
         }
         
-        [HttpGet("/posts/{id}")]
+        [AllowAnonymous]
+        [HttpGet("/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -42,7 +45,8 @@ namespace PostMicroservice.Controllers
             }
         }
         
-        [HttpGet("/posts")]
+        [AllowAnonymous]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetPostsAsync()
@@ -57,7 +61,8 @@ namespace PostMicroservice.Controllers
             }
         }
 
-        [HttpGet("/posts/users/{id}")]
+        [AllowAnonymous]
+        [HttpGet("/users/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -77,7 +82,7 @@ namespace PostMicroservice.Controllers
             }
         }
 
-        [HttpPost("/posts")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -97,7 +102,7 @@ namespace PostMicroservice.Controllers
             }
         }
 
-        [HttpPost("/posts/{id}/likes/add")]
+        [HttpPost("/{id}/likes/add")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -122,7 +127,7 @@ namespace PostMicroservice.Controllers
             }
         }
 
-        [HttpPost("/posts/{id}/likes/remove")]
+        [HttpPost("/{id}/likes/remove")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

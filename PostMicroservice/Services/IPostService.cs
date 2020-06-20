@@ -14,7 +14,7 @@ namespace PostMicroservice.Services
         /// <returns>Post by id</returns>
         Task<Post> GetPostByIdAsync(Guid id);
 
-        Task<List<Post>> GetPostsAsync();
+        Task<IEnumerable<Post>> GetPostsAsync();
 
         Task<Post> CreatePostAsync(string content, string token);
         
@@ -24,7 +24,7 @@ namespace PostMicroservice.Services
         /// Get posts from a user by id.
         /// </summary>
         /// <returns>List of posts by user id</returns>
-        Task<List<Post>> GetPostsByUserIdAsync(Guid userId);
+        Task<IEnumerable<Post>> GetPostsByUserIdAsync(Guid userId);
 
         Task<Post> AddLikeToPostAsync(Guid postId, string token);
         

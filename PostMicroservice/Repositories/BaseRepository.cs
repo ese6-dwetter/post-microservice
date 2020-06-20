@@ -26,7 +26,7 @@ namespace PostMicroservice.Repositories
             return entity;
         }
 
-        public async Task<List<T>> ReadAsync()
+        public async Task<IEnumerable<T>> ReadAsync()
         {
             return await Collection.Find(entity => true).ToListAsync();
         }
