@@ -68,7 +68,7 @@ namespace PostMicroservice.Services
             return posts;
         }
 
-        public async Task<Post> AddLikeToPostAsync(Guid postId, string token)
+        public async Task<Post> LikePostByIdAsync(Guid postId, string token)
         {
             var id = Guid.Parse(_tokenGenerator.GetJwtClaim(token, "nameid"));
             var username = _tokenGenerator.GetJwtClaim(token, "unique_name");
@@ -95,7 +95,7 @@ namespace PostMicroservice.Services
             return await _repository.UpdateAsync(postId, post);
         }
 
-        public async Task<Post> RemoveLikeFromPostAsync(Guid postId, string token)
+        public async Task<Post> UnlikePostByIdAsync(Guid postId, string token)
         {
             var id = Guid.Parse(_tokenGenerator.GetJwtClaim(token, "nameid"));
 

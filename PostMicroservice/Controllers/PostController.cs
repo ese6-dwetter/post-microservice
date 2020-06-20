@@ -25,7 +25,7 @@ namespace PostMicroservice.Controllers
         }
         
         [AllowAnonymous]
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -62,7 +62,7 @@ namespace PostMicroservice.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("/users/{id}")]
+        [HttpGet("users/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -102,7 +102,7 @@ namespace PostMicroservice.Controllers
             }
         }
 
-        [HttpPost("/{id}/likes/add")]
+        [HttpPost("{id}/likes")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -111,7 +111,7 @@ namespace PostMicroservice.Controllers
         {
             try
             {
-                return Ok(await _service.AddLikeToPostAsync(id, token));
+                return Ok(await _service.LikePostByIdAsync(id, token));
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -127,16 +127,16 @@ namespace PostMicroservice.Controllers
             }
         }
 
-        [HttpPost("/{id}/likes/remove")]
+        [HttpDelete("{id}/likes")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> RemoveLikeToPostAsync([FromQuery] Guid id, [FromHeader(Name = "Authorization")] string token)
+        public async Task<IActionResult> UnlikePostByIdAsync([FromQuery] Guid id, [FromHeader(Name = "Authorization")] string token)
         {
             try
             {
-                return Ok(await _service.RemoveLikeFromPostAsync(id, token));
+                return Ok(await _service.UnlikePostByIdAsync(id, token));
             }
             catch (UnauthorizedAccessException ex)
             {

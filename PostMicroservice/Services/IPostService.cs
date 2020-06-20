@@ -26,8 +26,8 @@ namespace PostMicroservice.Services
         /// <returns>List of posts by user id</returns>
         Task<IEnumerable<Post>> GetPostsByUserIdAsync(Guid userId);
 
-        Task<Post> AddLikeToPostAsync(Guid postId, string token);
+        Task<Post> LikePostByIdAsync(Guid postId, string token);
         
-        Task<Post> RemoveLikeFromPostAsync(Guid postId, string token);
+        Task<Post> UnlikePostByIdAsync(Guid postId, string token);
     }
 }
