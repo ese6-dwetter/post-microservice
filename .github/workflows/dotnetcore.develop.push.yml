@@ -12,7 +12,7 @@ env:
 
 jobs:
   sonarcloud-scan:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v3
         with:
@@ -27,7 +27,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v3
         with:
@@ -72,7 +72,7 @@ jobs:
 
   deliver:
     needs: [sonarcloud-scan, build]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Download release artifact
         uses: actions/download-artifact@v3
@@ -94,7 +94,7 @@ jobs:
   
   deploy:
     needs: deliver
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Download Kubernetes artifact
         uses: actions/download-artifact@v3
